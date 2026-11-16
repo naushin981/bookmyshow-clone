@@ -1,0 +1,11 @@
+{
+  "name": "reel-rush",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "node dev.cjs"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  }
+}

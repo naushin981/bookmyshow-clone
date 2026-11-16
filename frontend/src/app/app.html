@@ -1,0 +1,280 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Reel Rush home">
+      <span class="brand-mark" aria-hidden="true">▶</span>
+      <span>reel<span class="brand-accent">rush</span></span>
+    </a>
+
+    <label class="search-field">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m16 16 4 4"></path></svg>
+      <input
+        type="search"
+        placeholder="Search movies, events, experiences..."
+        aria-label="Search listings"
+        [(ngModel)]="searchTerm"
+      >
+      <kbd>⌘ K</kbd>
+    </label>
+
+    <div class="topbar-actions">
+      <label class="city-picker">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 12-8 12S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>
+        <select aria-label="Select your city" [(ngModel)]="currentCity">
+          @for (city of cities; track city) {
+            <option [value]="city">{{ city }}</option>
+          }
+        </select>
+        <span class="chevron">⌄</span>
+      </label>
+      <button class="avatar-button" type="button" aria-label="Sign in" (click)="openSignIn()">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M5 21a7 7 0 0 1 14 0"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="subnav" aria-label="Main navigation">
+    <div class="subnav-inner">
+      <div class="subnav-links">
+        @for (category of categories; track category) {
+          <a href="#now-showing" [class.active]="activeCategory === category" (click)="selectCategory(category)">{{ category }}</a>
+        }
+      </div>
+      <div class="subnav-links subnav-secondary">
+        <a href="#offers">Offers</a>
+        <a href="#about">About us</a>
+      </div>
+    </div>
+  </nav>
+
+  <main>
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <div class="hero-kicker"><span class="live-dot"></span> THE BIG SCREEN IS CALLING</div>
+        <h1 id="hero-title">A little more<br>cinema. A lot more <span>magic.</span></h1>
+        <p>Find your next favourite story, pick the perfect seats, and make a night of it.</p>
+        <div class="hero-actions">
+          <a class="primary-button" href="#now-showing">Explore movies <span aria-hidden="true">↗</span></a>
+          <span class="hero-note"><span class="note-stars">★★★★★</span> Loved by movie people</span>
+        </div>
+      </div>
+      <div class="hero-art" aria-label="Interstellar movie poster">
+        <div class="hero-glow"></div>
+        <img src="/posters/movie1.jpg" alt="Interstellar movie poster">
+        <div class="hero-art-caption"><span>FEATURED FILM</span><strong>Interstellar</strong></div>
+      </div>
+      <div class="hero-index" aria-hidden="true"><span>01</span> / 05</div>
+      <div class="hero-bottom-line" aria-hidden="true"></div>
+    </section>
+
+    <section class="now-showing content-width" id="now-showing">
+      <div class="section-heading">
+        <div>
+          <p class="eyebrow">YOUR FRONT ROW STARTS HERE</p>
+          <h2>{{ activeCategory === 'Movies' ? 'Now showing' : activeCategory + ' to discover' }} <span class="heading-dot">.</span></h2>
+        </div>
+        <span class="listing-count">{{ filteredListings.length }} PICKS IN {{ activeCategory.toUpperCase() }}</span>
+      </div>
+
+      @if (apiError) {
+        <div class="api-notice" role="status">
+          <span class="notice-dot"></span>
+          Showing the latest picks. Booking service is temporarily unavailable.
+        </div>
+      }
+
+      <div class="movie-grid">
+        @for (listing of filteredListings; track listing.id) {
+          <article class="movie-card">
+            <button class="poster-button" type="button" (click)="openBooking(listing)" [attr.aria-label]="'Book ' + listing.title">
+              @if (listing.category === 'Movies' && listing.poster) {
+                <img [src]="listing.poster" [alt]="listing.title + ' poster'">
+              } @else {
+                <span class="listing-illustration" [class]="'listing-illustration art-' + listing.category.toLowerCase()">
+                  <span class="illustration-glow"></span>
+                  <span class="illustration-icon" aria-hidden="true">{{ categoryIcon(listing.category) }}</span>
+                  <span class="illustration-label">{{ listing.category }}</span>
+                  <span class="illustration-title">{{ listing.title }}</span>
+                  <span class="illustration-location">{{ listing.language }}</span>
+                </span>
+              }
+              <span class="poster-tag">{{ listing.status }}</span>
+              <span class="poster-cta">Book tickets <span aria-hidden="true">↗</span></span>
+            </button>
+            <div class="movie-info">
+              <div class="movie-title-row">
+                <h3>{{ listing.title }}</h3>
+                @if (listing.category === 'Movies') {
+                  <span class="rating"><span aria-hidden="true">★</span> {{ listing.rating }}</span>
+                } @else {
+                  <span class="listing-price">₹{{ listing.price }}</span>
+                }
+              </div>
+              <p>{{ listing.genre }} <span class="info-divider">·</span> {{ listing.category === 'Movies' ? listing.language : listing.venue }}</p>
+            </div>
+          </article>
+        } @empty {
+          <div class="empty-state">
+            <span aria-hidden="true">⌕</span>
+            <h3>No {{ activeCategory.toLowerCase() }} found</h3>
+            <p>Try another search or explore a different category.</p>
+            <button type="button" (click)="searchTerm = ''">Clear search</button>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="experience-strip content-width" id="experiences">
+      <div class="experience-icon" aria-hidden="true">✦</div>
+      <div>
+        <p class="eyebrow">MORE THAN MOVIES</p>
+        <h2>Make a whole night of it.</h2>
+        <p>Live shows, big games, and plans worth getting dressed for.</p>
+      </div>
+      <a href="#offers" aria-label="Explore experiences">Explore experiences <span aria-hidden="true">↗</span></a>
+    </section>
+
+    <section class="offers content-width" id="offers">
+      <div class="offer-copy">
+        <span class="offer-kicker">GOOD MOVIES. BETTER DEALS.</span>
+        <h2>Your seat is waiting.<br><span>Your offer is too.</span></h2>
+        <p>Keep an eye out for special offers when you book your next movie night.</p>
+      </div>
+      <div class="offer-stamp"><span>MAKE<br>ROOM FOR<br><strong>MORE</strong></span><i>✳</i></div>
+    </section>
+  </main>
+
+  <footer class="footer" id="about">
+    <a class="brand footer-brand" href="#" aria-label="Reel Rush home">
+      <span class="brand-mark" aria-hidden="true">▶</span>
+      <span>reel<span class="brand-accent">rush</span></span>
+    </a>
+    <p>Made for the love of the big screen.</p>
+    <span class="footer-copyright">© 2026 Reel Rush</span>
+  </footer>
+
+  @if (selectedListing; as movie) {
+    <div class="modal-backdrop" (click)="closeBooking()" (keydown.escape)="closeBooking()">
+      <section class="booking-modal" role="dialog" aria-modal="true" [attr.aria-label]="'Book ' + movie.title" (click)="$event.stopPropagation()">
+        <button class="modal-close" type="button" aria-label="Close booking dialog" (click)="closeBooking()">×</button>
+        <div class="modal-heading">
+          <p class="eyebrow">MAKE IT A {{ movie.category === 'Movies' ? 'MOVIE NIGHT' : movie.category.toUpperCase() + ' PLAN' }}</p>
+          <h2>{{ movie.title }}</h2>
+          <p>{{ movie.genre }} <span class="info-divider">·</span> {{ movie.category === 'Movies' ? movie.language : movie.venue }}</p>
+        </div>
+
+        @if (bookingComplete; as booking) {
+          <div class="booking-success" role="status">
+            <span class="success-check">✓</span>
+            <p class="eyebrow">YOU'RE ALL SET</p>
+            <h3>Your plans are booked.</h3>
+            <p>{{ booking.city }} <span class="info-divider">·</span> {{ booking.showDate }} <span class="info-divider">·</span> {{ booking.showTime }}</p>
+            <p>Seats: {{ booking.seatCodes.join(', ') }}</p>
+            <div class="booking-reference">BOOKING ID <strong>{{ booking.reference }}</strong></div>
+            <button class="primary-button full-button" type="button" (click)="closeBooking()">Lovely, thanks</button>
+          </div>
+        } @else {
+          <form class="booking-form" (ngSubmit)="submitBooking()">
+            <label class="form-label">Your city
+              <select name="bookingCity" [(ngModel)]="bookingCity" (ngModelChange)="refreshSeatAvailability()">
+                @for (city of cities; track city) {
+                  <option [value]="city">{{ city }}</option>
+                }
+              </select>
+            </label>
+            <fieldset class="date-picker">
+              <legend class="form-label">Pick a date</legend>
+              <div class="date-options">
+                @for (date of showDates; track date.value) {
+                  <button type="button" class="date-option" [class.selected]="selectedDate === date.value" (click)="selectShowDate(date.value)">
+                    <span>{{ date.day }}</span><strong>{{ date.number }}</strong><small>{{ date.month }}</small>
+                  </button>
+                }
+              </div>
+            </fieldset>
+            <fieldset class="time-picker">
+              <legend class="form-label">Choose a showtime</legend>
+              <div class="time-options">
+                @for (time of showTimes; track time) {
+                  <button type="button" [class.selected]="selectedTime === time" (click)="selectShowTime(time)">{{ time }}</button>
+                }
+              </div>
+            </fieldset>
+            <section class="seat-selection" aria-label="Select your seats">
+              <div class="seat-selection-heading">
+                <span class="form-label">Choose your seats <small>Select up to 8</small></span>
+                @if (selectedSeats.length > 0) {
+                  <span class="selected-seat-count">{{ selectedSeats.length }} selected</span>
+                }
+              </div>
+              <div class="screen-label"><span></span> SCREEN THIS WAY <span></span></div>
+              @if (seatsLoading) {
+                <p class="seat-message" role="status"><span class="loading-spinner"></span> Checking seat availability…</p>
+              } @else if (seatLoadError) {
+                <div class="seat-message seat-message-error" role="alert">
+                  <span>{{ seatLoadError }}</span>
+                  <button type="button" (click)="refreshSeatAvailability()">Retry</button>
+                </div>
+              } @else {
+                <div class="seat-grid" aria-label="Available seats">
+                  @for (row of seatRows; track row) {
+                    <div class="seat-row">
+                      <span class="row-label">{{ row }}</span>
+                      @for (number of seatsPerRow; track number) {
+                        @let seatCode = row + number;
+                        <button
+                          type="button"
+                          class="seat-button"
+                          [class.selected]="selectedSeats.includes(seatCode)"
+                          [class.reserved]="reservedSeats.includes(seatCode)"
+                          [disabled]="reservedSeats.includes(seatCode)"
+                          [attr.aria-label]="seatCode + (reservedSeats.includes(seatCode) ? ', booked' : selectedSeats.includes(seatCode) ? ', selected' : ', available')"
+                          [attr.aria-pressed]="selectedSeats.includes(seatCode)"
+                          (click)="toggleSeat(seatCode)"
+                        >{{ number }}</button>
+                      }
+                    </div>
+                  }
+                </div>
+                <div class="seat-legend">
+                  <span><i class="legend-seat"></i> Available</span>
+                  <span><i class="legend-seat legend-selected"></i> Selected</span>
+                  <span><i class="legend-seat legend-reserved"></i> Booked</span>
+                </div>
+              }
+              @if (selectedSeats.length > 0) {
+                <div class="selection-summary">
+                  <span>Seats <strong>{{ selectedSeats.join(', ') }}</strong></span>
+                  <strong>₹{{ totalPrice }}</strong>
+                </div>
+              }
+            </section>
+            @if (bookingError) {
+              <p class="form-error" role="alert">{{ bookingError }}</p>
+            }
+            <button class="primary-button full-button" type="submit" [disabled]="isBooking || seatsLoading || !!seatLoadError || selectedSeats.length === 0">
+              @if (isBooking) {
+                <span class="loading-spinner"></span> Saving your seats…
+              } @else {
+                Confirm booking <span aria-hidden="true">↗</span>
+              }
+            </button>
+            <p class="booking-footnote">No payment needed for this demo booking. Your seats are saved when booking completes.</p>
+          </form>
+        }
+      </section>
+    </div>
+  }
+
+  @if (showSignIn) {
+    <div class="modal-backdrop" (click)="showSignIn = false">
+      <section class="booking-modal sign-in-modal" role="dialog" aria-modal="true" aria-label="Sign in" (click)="$event.stopPropagation()">
+        <button class="modal-close" type="button" aria-label="Close sign-in dialog" (click)="showSignIn = false">×</button>
+        <div class="signin-mark">▶</div>
+        <p class="eyebrow">WELCOME TO REEL RUSH</p>
+        <h2>Good to see you.</h2>
+        <p class="signin-copy">Sign-in is coming soon. For now, you can book your next movie night without an account.</p>
+        <button class="primary-button full-button" type="button" (click)="showSignIn = false">Explore movies <span aria-hidden="true">↗</span></button>
+      </section>
+    </div>
+  }
+</div>

@@ -1,0 +1,18 @@
+{
+  "name": "reel-rush-backend",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Reel Rush movie catalog and booking API",
+  "scripts": {
+    "start": "node server.cjs",
+    "dev": "node --watch server.cjs"
+  },
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "express": "^5.1.0",
+    "mysql2": "^3.14.0"
+  }
+}
