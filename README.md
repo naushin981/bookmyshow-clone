@@ -10,6 +10,18 @@ The GitHub Pages preview shows the frontend and sample movie listings. Booking r
 
 The deployment workflow builds and publishes the frontend whenever changes are pushed to `main`. In the repository settings, open **Pages** and set the build and deployment source to **GitHub Actions**. After the workflow completes, the live preview link above will be available.
 
+## Enable booking on the live site
+
+GitHub Pages hosts only the frontend. The Express API and MySQL database must also be running on a public host for live seat availability and bookings. The backend supports Railway's MySQL environment variables.
+
+1. In Railway, create a project from this GitHub repository and add a MySQL service.
+2. Add a service for the API, set its root directory to `/backend`, its start command to `npm start`, and its health check path to `/api/health`.
+3. In the API service's Variables, add `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME` as references to the MySQL service's `MYSQLHOST`, `MYSQLPORT`, `MYSQLUSER`, `MYSQLPASSWORD`, and `MYSQLDATABASE` variables. For a service named `MySQL`, the values are `${{MySQL.MYSQLHOST}}`, `${{MySQL.MYSQLPORT}}`, `${{MySQL.MYSQLUSER}}`, `${{MySQL.MYSQLPASSWORD}}`, and `${{MySQL.MYSQLDATABASE}}`. If you named the database service differently, use that service name in the references.
+4. Set the API service variable `FRONTEND_ORIGINS` to `https://naushin981.github.io`. The API initializes the required tables and demo listings on startup. Generate a public domain for the API and verify it is healthy at `https://<your-api-domain>/api/health`.
+5. In GitHub, open **Settings → Secrets and variables → Actions → Variables**, add `API_BASE_URL` with the API's public URL (for example, `https://your-api.up.railway.app`, without `/api`), then run the **Deploy frontend to GitHub Pages** workflow.
+
+The workflow writes that public API URL into the frontend at build time. Keep database credentials in Railway's variables; do not put them in GitHub or the frontend config. Booking on the live site will work after both services are running and the Pages deployment completes.
+
 ## Requirements
 
 - Node.js 22.13 or newer

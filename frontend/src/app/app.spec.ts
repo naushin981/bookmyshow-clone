@@ -15,6 +15,7 @@ describe('App', () => {
   });
 
   afterEach(() => {
+    window.REEL_RUSH_CONFIG = { apiBaseUrl: '' };
     httpTesting.verify();
   });
 
@@ -23,6 +24,15 @@ describe('App', () => {
     fixture.detectChanges();
 
     httpTesting.expectOne('/api/listings').flush([]);
+    expect(fixture.componentInstance).toBeTruthy();
+  });
+
+  it('should use the configured public API base URL', () => {
+    window.REEL_RUSH_CONFIG = { apiBaseUrl: 'https://api.example.com/' };
+    const fixture = TestBed.createComponent(App);
+    fixture.detectChanges();
+
+    httpTesting.expectOne('https://api.example.com/api/listings').flush([]);
     expect(fixture.componentInstance).toBeTruthy();
   });
 

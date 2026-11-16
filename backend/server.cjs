@@ -9,12 +9,23 @@ const port = Number(process.env.PORT || process.env.API_PORT || 3000);
 const cities = ['Bengaluru', 'Mumbai', 'Delhi', 'Chennai', 'Hyderabad', 'Pune'];
 const showTimes = ['10:30 AM', '1:45 PM', '5:15 PM', '8:30 PM'];
 const categories = ['Movies', 'Events', 'Plays', 'Sports', 'Activities'];
+const frontendOrigins = new Set(
+  (process.env.FRONTEND_ORIGINS || 'http://localhost:4200,https://naushin981.github.io')
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean),
+);
+const dbHost = process.env.DB_HOST || process.env.MYSQLHOST || '127.0.0.1';
+const dbPort = Number(process.env.DB_PORT || process.env.MYSQLPORT || 3306);
+const dbUser = process.env.DB_USER || process.env.MYSQLUSER || 'root';
+const dbPassword = process.env.DB_PASSWORD || process.env.MYSQLPASSWORD || '';
+const dbName = process.env.DB_NAME || process.env.MYSQLDATABASE || 'reel_rush';
 const pool = mysql.createPool({
-  host: process.env.DB_HOST || '127.0.0.1',
-  port: Number(process.env.DB_PORT || 3306),
-  user: process.env.DB_USER || 'root',
-  password: process.env.DB_PASSWORD || '',
-  database: process.env.DB_NAME || 'reel_rush',
+  host: dbHost,
+  port: dbPort,
+  user: dbUser,
+  password: dbPassword,
+  database: dbName,
   waitForConnections: true,
   connectionLimit: 10,
   dateStrings: true,
@@ -46,6 +57,23 @@ const listings = [
 ];
 
 app.use(express.json({ limit: '16kb' }));
+app.use((request, response, next) => {
+  const origin = request.get('Origin');
+
+  if (origin && frontendOrigins.has(origin)) {
+    response.setHeader('Access-Control-Allow-Origin', origin);
+    response.setHeader('Vary', 'Origin');
+    response.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    response.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+
+  if (request.method === 'OPTIONS') {
+    response.sendStatus(origin && frontendOrigins.has(origin) ? 204 : 403);
+    return;
+  }
+
+  next();
+});
 
 app.get('/api/health', async (_request, response) => {
   await pool.query('SELECT 1');
@@ -306,7 +334,7 @@ async function start() {
     await initializeDatabase();
     app.listen(port, () => {
       console.log(`Reel Rush API listening at http://localhost:${port}`);
-      console.log(`Connected to MySQL database "${process.env.DB_NAME || 'reel_rush'}" at ${process.env.DB_HOST || '127.0.0.1'}:${process.env.DB_PORT || '3306'}`);
+      console.log(`Connected to MySQL database "${dbName}" at ${dbHost}:${dbPort}`);
     });
   } catch (error) {
     console.error('Could not connect to MySQL or initialize the database.');

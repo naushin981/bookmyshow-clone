@@ -2,6 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http'
 import { afterNextRender, ChangeDetectorRef, Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TimeoutError, timeout } from 'rxjs';
+import { apiUrl } from './api-config';
 
 type ListingCategory = 'Movies' | 'Events' | 'Plays' | 'Sports' | 'Activities';
 
@@ -182,7 +183,7 @@ export class App {
 
     this.isBooking = true;
     this.bookingError = '';
-    this.http.post<BookingResponse>('/api/bookings', {
+    this.http.post<BookingResponse>(apiUrl('/api/bookings'), {
       movieId: this.selectedListing.id,
       city: this.bookingCity,
       showDate: this.selectedDate,
@@ -228,7 +229,7 @@ export class App {
       .set('showDate', this.selectedDate)
       .set('showTime', this.selectedTime);
 
-    this.http.get<SeatAvailability>(`/api/listings/${listing.id}/seats`, { params }).subscribe({
+    this.http.get<SeatAvailability>(apiUrl(`/api/listings/${listing.id}/seats`), { params }).subscribe({
       next: (availability) => {
         if (requestId !== this.seatRequestId) {
           return;
@@ -252,7 +253,7 @@ export class App {
   }
 
   private loadListings(): void {
-    this.http.get<Listing[]>('/api/listings').subscribe({
+    this.http.get<Listing[]>(apiUrl('/api/listings')).subscribe({
       next: (listings) => {
         this.listings = listings;
         this.apiError = false;

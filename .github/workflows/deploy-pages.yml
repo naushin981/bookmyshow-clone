@@ -41,6 +41,12 @@ jobs:
       - name: Install frontend dependencies
         run: npm ci --prefix frontend
 
+      - name: Configure frontend API URL
+        env:
+          API_BASE_URL: ${{ vars.API_BASE_URL }}
+        run: |
+          node -e 'const fs = require("node:fs"); const apiBaseUrl = (process.env.API_BASE_URL || "").trim().replace(/\/+$/, ""); fs.writeFileSync("frontend/public/config.js", `window.REEL_RUSH_CONFIG = { apiBaseUrl: ${JSON.stringify(apiBaseUrl)} };\n`);'
+
       - name: Build frontend
         run: npm --prefix frontend run build -- --base-href "/${{ github.event.repository.name }}/"
 
