@@ -40,11 +40,11 @@ interface ShowDate {
 }
 
 const LISTINGS: Listing[] = [
-  { id: 1, title: 'Interstellar', category: 'Movies', genre: 'Sci-Fi · Adventure', rating: '9.1', language: 'English', poster: '/posters/movie1.jpg', status: 'FAN FAVOURITE', price: 249, venue: 'PVR Orion Mall' },
-  { id: 2, title: 'Spider-Man: No Way Home', category: 'Movies', genre: 'Action · Adventure', rating: '8.7', language: 'English', poster: '/posters/movie2.jpg', status: 'NOW SHOWING', price: 199, venue: 'INOX Garuda Mall' },
-  { id: 3, title: 'Dune: Part Two', category: 'Movies', genre: 'Sci-Fi · Drama', rating: '8.9', language: 'English', poster: '/posters/movie3.jpg', status: 'NOW SHOWING', price: 249, venue: 'Cinepolis Forum' },
-  { id: 4, title: 'Avengers: Endgame', category: 'Movies', genre: 'Action · Sci-Fi', rating: '8.8', language: 'English', poster: '/posters/movie4.jpg', status: 'NOW SHOWING', price: 199, venue: 'PVR Vega City' },
-  { id: 5, title: 'The Batman', category: 'Movies', genre: 'Action · Thriller', rating: '8.5', language: 'English', poster: '/posters/movie5.jpg', status: 'NOW SHOWING', price: 249, venue: 'INOX Mantri Square' },
+  { id: 1, title: 'Interstellar', category: 'Movies', genre: 'Sci-Fi · Adventure', rating: '9.1', language: 'English', poster: 'posters/movie1.jpg', status: 'FAN FAVOURITE', price: 249, venue: 'PVR Orion Mall' },
+  { id: 2, title: 'Spider-Man: No Way Home', category: 'Movies', genre: 'Action · Adventure', rating: '8.7', language: 'English', poster: 'posters/movie2.jpg', status: 'NOW SHOWING', price: 199, venue: 'INOX Garuda Mall' },
+  { id: 3, title: 'Dune: Part Two', category: 'Movies', genre: 'Sci-Fi · Drama', rating: '8.9', language: 'English', poster: 'posters/movie3.jpg', status: 'NOW SHOWING', price: 249, venue: 'Cinepolis Forum' },
+  { id: 4, title: 'Avengers: Endgame', category: 'Movies', genre: 'Action · Sci-Fi', rating: '8.8', language: 'English', poster: 'posters/movie4.jpg', status: 'NOW SHOWING', price: 199, venue: 'PVR Vega City' },
+  { id: 5, title: 'The Batman', category: 'Movies', genre: 'Action · Thriller', rating: '8.5', language: 'English', poster: 'posters/movie5.jpg', status: 'NOW SHOWING', price: 249, venue: 'INOX Mantri Square' },
 ];
 
 @Component({

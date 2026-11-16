@@ -2,6 +2,14 @@
 
 Reel Rush is a movie-booking demo with a separate Angular frontend and an Express API backed by MySQL.
 
+**Live preview:** [https://naushin981.github.io/bookmyshow-clone/](https://naushin981.github.io/bookmyshow-clone/)
+
+The GitHub Pages preview shows the frontend and sample movie listings. Booking requires the API and MySQL database described below, which are not hosted by GitHub Pages.
+
+## Publish the frontend on GitHub Pages
+
+The deployment workflow builds and publishes the frontend whenever changes are pushed to `main`. In the repository settings, open **Pages** and set the build and deployment source to **GitHub Actions**. After the workflow completes, the live preview link above will be available.
+
 ## Requirements
 
 - Node.js 22.13 or newer
