@@ -5,7 +5,7 @@ const express = require('express');
 const mysql = require('mysql2/promise');
 
 const app = express();
-const port = Number(process.env.API_PORT || 3000);
+const port = Number(process.env.PORT || process.env.API_PORT || 3000);
 const cities = ['Bengaluru', 'Mumbai', 'Delhi', 'Chennai', 'Hyderabad', 'Pune'];
 const showTimes = ['10:30 AM', '1:45 PM', '5:15 PM', '8:30 PM'];
 const categories = ['Movies', 'Events', 'Plays', 'Sports', 'Activities'];
